@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import NoAutenticate from './components/routes/NoAutenticate';
+import Autenticate from './components/routes/Autenticate';
+import { ContextFirebase } from './lib/ContextFirebase';
+import { auth } from './lib/firebase';
 
 function App() {
+  const [autenticate, setAutenticate] = useState(null);
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setAutenticate(user);
+      } else {
+        setAutenticate(false);
+      }
+    });
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ContextFirebase>
+        {autenticate ? <Autenticate /> : <NoAutenticate />}
+      </ContextFirebase>
     </div>
   );
 }
